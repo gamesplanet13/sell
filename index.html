@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sell Your PlayStation Console</title>
+  <style>
+    body { background: #000; color: #fff; font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; }
+    button { margin-top: 20px; padding: 12px; background: #4caf50; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+    #firmwareBox { display: none; }
+    #sellForm { display: none; }
+  </style>
+</head>
+<body>
+  <h2>🎮 Sell Your PlayStation Console</h2>
+
+  <!-- Console selection -->
+  <label>Console:</label>
+  <select id="console" onchange="updateModels()">
+    <option value="">-- Select Console --</option>
+    <option value="PS2">PS2</option>
+    <option value="PS3">PS3</option>
+    <option value="PS4">PS4</option>
+    <option value="PS5">PS5</option>
+  </select>
+
+  <!-- Model selection -->
+  <label>Model:</label>
+  <select id="model"></select>
+
+  <!-- Firmware selection (PS4 & PS5 only) -->
+  <div id="firmwareBox">
+    <label>Firmware Version:</label>
+    <select id="firmware"></select>
+  </div>
+
+  <!-- Condition selection -->
+  <label>Condition:</label>
+  <select id="condition">
+    <option value="">-- Select Condition --</option>
+    <option value="Best">Best (No scratches, not repaired)</option>
+    <option value="Normal">Normal (Not repaired but has scratches)</option>
+    <option value="Poor">Poor (Repaired)</option>
+  </select>
+
+  <!-- Reason selection -->
+  <label>Why do you want to sell?</label>
+  <select id="reason">
+    <option value="">-- Select Reason --</option>
+    <option value="Need Money">Need Money</option>
+    <option value="Want to Upgrade to High">Want to Upgrade to High</option>
+    <option value="No Need">No Need</option>
+  </select>
+
+  <!-- Want to Sell button -->
+  <button onclick="showForm()">Want to Sell</button>
+
+  <!-- Hidden Sell Form -->
+  <div id="sellForm">
+    <label>Name:</label><input type="text" id="name" />
+    <label>Mobile:</label><input type="text" id="mobile" />
+    <label>Alt Mobile:</label><input type="text" id="altmobile" />
+    <label>Address:</label><textarea id="address"></textarea>
+    <label>Landmark:</label><input type="text" id="landmark" />
+    <label>Pincode:</label><input type="text" id="pincode" />
+    <label>City:</label><input type="text" id="city" />
+    <label>State:</label><input type="text" id="state" />
+    <label>Length (cm):</label><input type="number" id="length" />
+    <label>Width (cm):</label><input type="number" id="width" />
+    <label>Height (cm):</label><input type="number" id="height" />
+    <label>Weight (kg, optional):</label><input type="number" id="weight" step="0.01" />
+
+    <button onclick="submitForm()">Sell</button>
+  </div>
+
+  <script>
+    const modelMap = {
+      PS2: ["Slim"], // Fat removed
+      PS3: ["Slim", "SuperSlim"], // Fat removed
+      PS4: ["Fat", "Slim", "Pro"],
+      PS5: ["Fat Digital", "Fat Disc", "Slim Digital", "Slim Disc", "Pro Digital", "Pro Disc"]
+    };
+
+    const firmwareOptions = {
+      PS4: ["Below 9.00", "9.00", "9.03", "9.04", "10.00", "10.01", "10.50", "10.70", "11.00", "11.02", "11.50", "12.00", "12.50"],
+      PS5: ["20.02-02.25.00","20.02-02.30.00","20.02-02.50.00","21.01-03.00.00","21.01-03.10.00","21.02-04.00.00","21.02-04.02.00","21.02-04.03.00","22.01-05.00.00","22.01-05.02.00","22.02-06.00.00","22.02-06.02.00","23.01-07.00.00","23.01-07.01.00","23.01-07.20.00","23.02-08.00.00","23.02-08.20.00","24.01-09.00.00","24.01-09.10.00","24.02-10.00.00","24.02-10.10.00","25.01-11.00.00","25.01-11.10.00","25.02-12.00.00"]
+    };
+
+    function updateModels() {
+      const console = document.getElementById("console").value;
+      const modelSelect = document.getElementById("model");
+      modelSelect.innerHTML = "";
+
+      if (modelMap[console]) {
+        modelMap[console].forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          modelSelect.appendChild(opt);
+        });
+      }
+
+      const firmwareBox = document.getElementById("firmwareBox");
+      const firmwareSelect = document.getElementById("firmware");
+      firmwareSelect.innerHTML = "";
+
+      if (firmwareOptions[console]) {
+        firmwareOptions[console].forEach(fw => {
+          const opt = document.createElement("option");
+          opt.value = fw;
+          opt.textContent = fw;
+          firmwareSelect.appendChild(opt);
+        });
+        firmwareBox.style.display = "block";
+      } else {
+        firmwareBox.style.display = "none";
+      }
+    }
+
+    function showForm() {
+      document.getElementById("sellForm").style.display = "block";
+    }
+
+    function submitForm() {
+      const console = document.getElementById("console").value;
+      const model = document.getElementById("model").value;
+      const firmware = document.getElementById("firmware").value;
+      const condition = document.getElementById("condition").value;
+      const reason = document.getElementById("reason").value;
+      const name = document.getElementById("name").value;
+      const mobile = document.getElementById("mobile").value;
+      const altmobile = document.getElementById("altmobile").value;
+      const address = document.getElementById("address").value;
+      const landmark = document.getElementById("landmark").value;
+      const pincode = document.getElementById("pincode").value;
+      const city = document.getElementById("city").value;
+      const state = document.getElementById("state").value;
+      const length = document.getElementById("length").value;
+      const width = document.getElementById("width").value;
+      const height = document.getElementById("height").value;
+      const weight = document.getElementById("weight").value;
+
+      let msg = `Game Console Sell Request\n`;
+      msg += `Name: ${name}\nMobile: ${mobile}\nAlt: ${altmobile}\n`;
+      msg += `Console: ${console} (${model})\n`;
+      if (firmware) msg += `Firmware: ${firmware}\n`;
+      msg += `Condition: ${condition}\nReason: ${reason}\n`;
+      msg += `Address: ${address}, ${landmark}\nPincode: ${pincode}, City: ${city}, State: ${state}\n`;
+      msg += `Size: ${length}x${width}x${height} cm, Weight: ${weight || 'N/A'} kg\n`;
+      msg += `Note: Send all sides' photos manually on WhatsApp.`;
+
+      const finalUrl = "https://wa.me/917983624797?text=" + encodeURIComponent(msg);
+      window.open(finalUrl, "_blank");
+    }
+  </script>
+</body>
+</html>
