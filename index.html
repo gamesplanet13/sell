@@ -10,8 +10,8 @@
     label { display: block; margin-top: 12px; font-weight: bold; }
     input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; }
     button { margin-top: 20px; padding: 12px; background: #4caf50; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
-    #firmwareBox { display: none; }
-    #sellForm { display: none; }
+    #firmwareBox, #sellForm, #selfShipDetails { display: none; }
+    .info-box { background:#111; padding:10px; margin-top:10px; border-left:4px solid #4caf50; }
   </style>
 </head>
 <body>
@@ -55,8 +55,26 @@
     <option value="No Need">No Need</option>
   </select>
 
-  <!-- Want to Sell button -->
-  <button onclick="showForm()">Want to Sell</button>
+  <!-- Shipping method selection -->
+  <label>Shipping Method:</label>
+  <select id="shipping" onchange="showShippingDetails()">
+    <option value="">-- Select Shipping Method --</option>
+    <option value="Self Ship">Customer Self-Ship</option>
+    <option value="Pickup">Games Planet Pickup</option>
+  </select>
+
+  <!-- Games Planet address section (hidden by default) -->
+  <div id="selfShipDetails" class="info-box">
+    <b>📦 Ship to Games Planet:</b><br>
+    Games Planet<br>
+    Shop No. 5, GROUND FLOOR, LAL BAHADUR SHASTRI MARKET, CIVIL LINES, RAMPUR, U.P – 244901<br>
+    📞 <b>Contact:</b> 7983624797<br><br>
+    You can copy this address for courier booking.<br><br>
+    <b>Note:</b> Courier charges upto ₹350 will be reimbursed along with console payout. After receiving your console, quality check will be done and payment will be made via your selected payment option.
+  </div>
+
+  <!-- Single dynamic button -->
+  <button id="sellBtn" onclick="toggleSellForm()">Want to Sell</button>
 
   <!-- Hidden Sell Form -->
   <div id="sellForm">
@@ -72,14 +90,12 @@
     <label>Width (cm):</label><input type="number" id="width" />
     <label>Height (cm):</label><input type="number" id="height" />
     <label>Weight (kg, optional):</label><input type="number" id="weight" step="0.01" />
-
-    <button onclick="submitForm()">Sell</button>
   </div>
 
   <script>
     const modelMap = {
-      PS2: ["Slim"], // Fat removed
-      PS3: ["Slim", "SuperSlim"], // Fat removed
+      PS2: ["Slim"],
+      PS3: ["Slim", "SuperSlim"],
       PS4: ["Fat", "Slim", "Pro"],
       PS5: ["Fat Digital", "Fat Disc", "Slim Digital", "Slim Disc", "Pro Digital", "Pro Disc"]
     };
@@ -120,8 +136,27 @@
       }
     }
 
-    function showForm() {
-      document.getElementById("sellForm").style.display = "block";
+    function showShippingDetails() {
+      const shipping = document.getElementById("shipping").value;
+      const detailsDiv = document.getElementById("selfShipDetails");
+
+      if (shipping === "Self Ship") {
+        detailsDiv.style.display = "block";
+      } else {
+        detailsDiv.style.display = "none";
+      }
+    }
+
+    function toggleSellForm() {
+      const form = document.getElementById("sellForm");
+      const btn = document.getElementById("sellBtn");
+
+      if (form.style.display === "none") {
+        form.style.display = "block";
+        btn.textContent = "Sell Now";
+      } else {
+        submitForm();
+      }
     }
 
     function submitForm() {
@@ -130,6 +165,7 @@
       const firmware = document.getElementById("firmware").value;
       const condition = document.getElementById("condition").value;
       const reason = document.getElementById("reason").value;
+      const shipping = document.getElementById("shipping").value;
       const name = document.getElementById("name").value;
       const mobile = document.getElementById("mobile").value;
       const altmobile = document.getElementById("altmobile").value;
@@ -147,7 +183,11 @@
       msg += `Name: ${name}\nMobile: ${mobile}\nAlt: ${altmobile}\n`;
       msg += `Console: ${console} (${model})\n`;
       if (firmware) msg += `Firmware: ${firmware}\n`;
-      msg += `Condition: ${condition}\nReason: ${reason}\n`;
+      msg += `Condition: ${condition}\nReason: ${reason}\nShipping Method: ${shipping}\n`;
+      if (shipping === "Self Ship") {
+        msg += `Ship To: Games Planet, Shop No. 5, GROUND FLOOR, LBS MARKET, CIVIL LINES, RAMPUR, U.P – 244901, Contact: 7983624797\n`;
+        msg += `Note: Courier charges upto ₹350 will be reimbursed along with console payout.\n`;
+      }
       msg += `Address: ${address}, ${landmark}\nPincode: ${pincode}, City: ${city}, State: ${state}\n`;
       msg += `Size: ${length}x${width}x${height} cm, Weight: ${weight || 'N/A'} kg\n`;
       msg += `Note: Send all sides' photos manually on WhatsApp.`;
