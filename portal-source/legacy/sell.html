@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sell Your PlayStation Console</title>
+  <style>
+    body { background: #000; color: #fff; font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; }
+    button { margin-top: 20px; padding: 12px; background: #4caf50; color: #fff; border: none; border-radius: 5px; cursor: pointer; width: 100%; }
+    #firmwareBox, #selfShipDetails, #priceBox, #sellForm { display: none; }
+    .info-box { background:#111; padding:10px; margin-top:10px; border-left:4px solid #4caf50; }
+  </style>
+</head>
+<body>
+  <h2>🎮 Sell Your PlayStation Console</h2>
+
+  <!-- Console selection -->
+  <label>Console:</label>
+  <select id="console" onchange="updateModels(); checkShowForm();">
+    <option value="">-- Select Console --</option>
+    <option value="PS2">PS2</option>
+    <option value="PS3">PS3</option>
+    <option value="PS4">PS4</option>
+    <option value="PS5">PS5</option>
+  </select>
+
+  <!-- Model selection -->
+  <label>Model:</label>
+  <select id="model" onchange="updatePrice(); checkShowForm();"></select>
+
+  <!-- Firmware selection (PS4 & PS5 only) -->
+  <div id="firmwareBox">
+    <label>Firmware Version:</label>
+    <select id="firmware" onchange="updatePrice(); checkShowForm();"></select>
+  </div>
+
+  <!-- Condition selection -->
+  <label>Condition:</label>
+  <select id="condition" onchange="updatePrice(); checkShowForm();">
+    <option value="">-- Select Condition --</option>
+    <option value="Best">Best (No scratches, not repaired)</option>
+    <option value="Normal">Normal (Not repaired but has scratches)</option>
+    <option value="Poor">Poor (Repaired)</option>
+  </select>
+
+  <!-- Reason selection -->
+  <label>Why do you want to sell?</label>
+  <select id="reason" onchange="checkShowForm();">
+    <option value="">-- Select Reason --</option>
+    <option value="Need Money">Need Money</option>
+    <option value="Want to Upgrade to High">Want to Upgrade to High</option>
+    <option value="No Need">No Need</option>
+  </select>
+
+  <!-- Shipping method selection -->
+  <label>Shipping Method:</label>
+  <select id="shipping" onchange="showShippingDetails(); checkShowForm();">
+    <option value="">-- Select Shipping Method --</option>
+    <option value="Self Ship">Customer Self-Ship</option>
+    <option value="Pickup">Games Planet Pickup</option>
+  </select>
+
+  <!-- Games Planet address section -->
+  <div id="selfShipDetails" class="info-box">
+    <b>📦 Ship to Games Planet:</b><br>
+    GAMES PLANET<br>
+    Near JK's Tyre, Gurudwara Road, Civil Lines, Rampur, U.P – 244901<br>
+    📞 <b>Contact:</b> 7983624797<br><br>
+    You can copy this address for courier booking.<br><br>
+    <b>Note:</b> Courier charges upto ₹350 will be reimbursed along with console payout. After receiving your console, quality check will be done and payment will be made via your selected payment option.
+  </div>
+
+  <!-- Price display -->
+  <div id="priceBox" class="info-box">
+    <b>💰 Estimated Price:</b> <span id="priceValue"></span>
+  </div>
+
+  <!-- Hidden Sell Form (shows only after selections complete) -->
+  <div id="sellForm">
+    <label>Name:</label><input type="text" id="name" />
+    <label>Mobile:</label><input type="text" id="mobile" />
+    <label>Alt Mobile:</label><input type="text" id="altmobile" />
+    <label>Address:</label><textarea id="address"></textarea>
+    <label>Landmark:</label><input type="text" id="landmark" />
+    <label>Pincode:</label><input type="text" id="pincode" />
+    <label>City:</label><input type="text" id="city" />
+    <label>State:</label><input type="text" id="state" />
+    <label>Length (cm):</label><input type="number" id="length" />
+    <label>Width (cm):</label><input type="number" id="width" />
+    <label>Height (cm):</label><input type="number" id="height" />
+    <label>Weight (kg, optional):</label><input type="number" id="weight" step="0.01" />
+
+    <!-- Sell button always at bottom -->
+    <button onclick="submitForm()">Sell Now</button>
+  </div>
+
+  <script>
+    const modelMap = {
+      PS2: ["Slim", "Slim Rasila Combo (IDE HDD)"],
+      PS3: ["Slim", "SuperSlim"],
+      PS4: ["Fat", "Slim", "Pro"],
+      PS5: ["Fat Digital", "Fat Disc", "Slim Digital", "Slim Disc", "Pro Digital", "Pro Disc"]
+    };
+
+    const firmwareOptions = {
+      PS4: ["Below 9.00", "9.00", "9.03", "9.04", "10.00", "10.01", "10.50", "10.70", "11.00", "11.02", "11.50", "12.00", "12.50"],
+      PS5: ["20.02-02.25.00","20.02-02.30.00","20.02-02.50.00","21.01-03.00.00","21.01-03.10.00","21.02-04.00.00","21.02-04.02.00","21.02-04.03.00","22.01-05.00.00","22.01-05.02.00","22.02-06.00.00","22.02-06.02.00","23.01-07.00.00","23.01-07.01.00","23.01-07.20.00","23.02-08.00.00","23.02-08.20.00","24.01-09.00.00","24.01-09.10.00","24.02-10.00.00","24.02-10.10.00","25.01-11.00.00","25.01-11.10.00","25.02-12.00.00"]
+    };
+
+    function updateModels() {
+      const console = document.getElementById("console").value;
+      const modelSelect = document.getElementById("model");
+      modelSelect.innerHTML = "";
+
+      if (modelMap[console]) {
+        modelMap[console].forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          modelSelect.appendChild(opt);
+        });
+      }
+
+      const firmwareBox = document.getElementById("firmwareBox");
+      const firmwareSelect = document.getElementById("firmware");
+      firmwareSelect.innerHTML = "";
+
+      if (firmwareOptions[console]) {
+        firmwareOptions[console].forEach(fw => {
+          const opt = document.createElement("option");
+          opt.value = fw;
+          opt.textContent = fw;
+          firmwareSelect.appendChild(opt);
+        });
+        firmwareBox.style.display = "block";
+      } else {
+        firmwareBox.style.display = "none";
+      }
+
+      updatePrice();
+    }
+
+    function updatePrice() {
+      const console = document.getElementById("console").value;
+      const model = document.getElementById("model").value;
+      const firmware = document.getElementById("firmware").value;
+      const condition = document.getElementById("condition").value;
+
+      const price = getPriceRange(console, model, firmware, condition);
+      const priceBox = document.getElementById("priceBox");
+      const priceValue = document.getElementById("priceValue");
+
+      if (console && model && condition) {
+        priceBox.style.display = "block";
+        priceValue.textContent = price;
+      } else {
+        priceBox.style.display = "none";
+      }
+    }
+
+    function checkShowForm() {
+      const console = document.getElementById("console").value;
+      const model = document.getElementById("model").value;
+      const firmware = document.getElementById("firmware").value;
+      const condition = document.getElementById("condition").value;
+      const reason = document.getElementById("reason").value;
+      const shipping = document.getElementById("shipping").value;
+
+      const firmwareNeeded = console === "PS4" || console === "PS5";
+      const firmwareFilled = firmwareNeeded ? firmware !== "" : true;
+
+      if (console && model && firmwareFilled && condition && reason && shipping) {
+        document.getElementById("sellForm").style.display = "block";
+      } else {
+        document.getElementById("sellForm").style.display = "none";
+      }
+    }
+
+    function getPriceRange(console, model, firmware, condition) {
+      if (console === "PS2") {
+        if (condition === "Poor") return "❌ Repaired PS2 not accepted";
+        if (model === "Slim Rasila Combo (IDE HDD)") return "₹2500 (Rasila Combo IDE HDD Set)";
+        if (model === "Slim") {
+          if (condition === "Best") return "₹1500 – ₹2000";
+          if (condition === "Normal") return "₹1000 – ₹1500";
+        }
+      }
+
+      if (console === "PS3") {
+        if (condition === "Poor") return "❌ Repaired PS3 not accepted";
+        if (model === "Slim") {
+          if (condition === "Best") return "₹5000 – ₹6000";
+          if (condition === "Normal") return "₹3500 – ₹5000";
+        }
+        if (model === "SuperSlim") {
+          if (condition === "Best") return "₹4000 – ₹5000";
+          if (condition === "Normal") return "₹3000 – ₹4000";
+        }
+      }
+
+      if (console === "PS4") {
+        if (condition === "Poor") return "❌ Repaired PS4 not accepted";
+        if (model === "Fat") {
+          return firmware === "Below 9.00" ? "₹5000 – ₹7000 (JB Possible)" : "₹4000 – ₹6000 (Non-JB)";
+        }
+        if (model === "Slim") {
+          return firmware === "Below 9.00" ? "₹10000 – ₹14000 (JB Possible)" : "₹7000 – ₹8000 (Non-JB)";
+        }
+        if (model === "Pro") {
+          return firmware === "Below 9.00" ? "₹14000 – ₹17000 (JB Possible)" : "₹12000 – ₹14000 (Non-JB)";
+        }
+      }
+
+      if (console === "PS5") {
+        switch(model) {
+          case "Fat Digital": return "₹15000";
+          case "Fat Disc": return "₹20000";
+          case "Slim Digital": return "₹18000 – ₹20000";
+          case "Slim Disc": return "₹24000";
+          case "Pro Digital": return "₹30000";
+          case "Pro Disc": return "₹35000";
+        }
+      }
+
+      return "To be declared";
+    }
+
+    function showShippingDetails() {
+      const shipping = document.getElementById("shipping").value;
+      const detailsDiv = document.getElementById("selfShipDetails");
+
+      detailsDiv.style.display = (shipping === "Self Ship") ? "block" : "none";
+    }
+
+    function submitForm() {
+      const console = document.getElementById("console").value;
+      const model = document.getElementById("model").value;
+      const firmware = document.getElementById("firmware").value;
+      const condition = document.getElementById("condition").value;
+      const reason = document.getElementById("reason").value;
+      const shipping = document.getElementById("shipping").value;
+      const name = document.getElementById("name").value;
+      const mobile = document.getElementById("mobile").value;
+      const altmobile = document.getElementById("altmobile").value;
+      const address = document.getElementById("address").value;
+      const landmark = document.getElementById("landmark").value;
+      const pincode = document.getElementById("pincode").value;
+      const city = document.getElementById("city").value;
+      const state = document.getElementById("state").value;
+      const length = document.getElementById("length").value;
+      const width = document.getElementById("width").value;
+      const height = document.getElementById("height").value;
+      const weight = document.getElementById("weight").value;
+
+      const price = getPriceRange(console, model, firmware, condition);
+
+      let msg = `Game Console Sell Request\n`;
+      msg += `Name: ${name}\nMobile: ${mobile}\nAlt: ${altmobile}\n`;
+      msg += `Console: ${console} (${model})\n`;
+      if (firmware) msg += `Firmware: ${firmware}\n`;
+      msg += `Condition: ${condition}\nReason: ${reason}\nShipping Method: ${shipping}\n`;
+      msg += `Estimated Price: ${price}\n`;
+      if (shipping === "Self Ship") {
+        msg += `Ship To: GAMES PLANET, Near JK's Tyre, Gurudwara Road, Civil Lines, Rampur, U.P – 244901, Contact: 7983624797\n`;
+        msg += `Note: Courier charges upto ₹350 will be reimbursed.\n`;
+      }
+      msg += `Address: ${address}, ${landmark}\nPincode: ${pincode}, City: ${city}, State: ${state}\n`;
+      msg += `Size: ${length}x${width}x${height} cm, Weight: ${weight || 'N/A'} kg\n`;
+      msg += `Note: Send all sides' photos manually on WhatsApp.`;
+
+      const finalUrl = "https://wa.me/917983624797?text=" + encodeURIComponent(msg);
+      window.open(finalUrl, "_blank");
+    }
+  </script>
+<script src="https://gamesplanet13.github.io/arcade-accessories-/ps2-style-footer.js?v=20261016-ps2-view"></script></body>
+</html>
+

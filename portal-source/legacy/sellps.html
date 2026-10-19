@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Want to Sell My Game Console</title>
+  <style>
+    body { background: #000; color: #fff; font-family: Arial; padding: 20px; max-width: 900px; margin: auto; }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; }
+    button { margin-top: 20px; padding: 12px; background: #4caf50; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+    .section-title { margin-top: 20px; border-bottom: 1px solid #4caf50; padding-bottom: 5px; font-size: 16px; }
+    #firmwareBox { display: none; }
+    .price-table { background: #111; padding: 15px; margin-top: 15px; border-left: 4px solid #4caf50; line-height: 1.7; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <h2>🕹️ Want to Sell My Game Console</h2>
+  <div style="background:#111;padding:15px;margin-bottom:15px;border-left:4px solid #4caf50;font-size:15px;line-height:1.6">
+    🎮 <b>If you want to sell your old or used gaming console</b>, please check all the details below and download the Terms & Conditions in <b>Hindi or English</b> as per your preference before submitting the form.<br>
+    📝 On clicking "Sell", you agree to our <b>Terms and Conditions</b> which will also be downloaded as a PDF for your reference.
+  </div>
+  <div class="price-table">
+    <b>✅ Estimated Value (Based on Condition + Model):</b><br><br>
+    🔸 <b>PS2</b><br>
+    &nbsp;&nbsp;• Slim: ₹1000 – ₹1500<br>
+    &nbsp;&nbsp;• Fat: ❌ Not Accepted (We do not buy PS2 Fat models)<br><br>
+
+    🔸 <b>PS3</b><br>
+    &nbsp;&nbsp;• Slim, SuperSlim: ₹4000 – ₹6000<br>
+    &nbsp;&nbsp;• Fat: ❌ Not Accepted (We do not buy PS3 Fat models)<br><br>
+
+    🔸 <b>PS4</b><br>
+    &nbsp;&nbsp;• Fat: ₹4000 – ₹6000 (Non-JB), ₹5000 – ₹7000 (JB)<br>
+    &nbsp;&nbsp;• Slim: ₹7000 – ₹8000 (Non-JB), ₹10000 – ₹14000 (JB)<br>
+    &nbsp;&nbsp;• Pro: ₹12000 – ₹14000 (Non-JB), ₹14000 – ₹17000 (JB)<br><br>
+
+    🔸 <b>PS5</b><br>
+    &nbsp;&nbsp;• Fat – Digital: ₹15000 | Disc: ₹20000<br>
+    &nbsp;&nbsp;• Slim – Digital: ₹18000 – ₹20000 | Disc: ₹24000<br>
+    &nbsp;&nbsp;• Pro – Digital: ₹30000 | Disc: ₹35000<br>
+  </div>
+
+  <label>Console:</label>
+  <select id="console" onchange="updateModels()">
+    <option value="">-- Select Console --</option>
+    <option value="PS2">PS2</option>
+    <option value="PS3">PS3</option>
+    <option value="PS4">PS4</option>
+    <option value="PS5">PS5</option>
+  </select>
+
+  <label>Model:</label>
+  <select id="model"></select>
+
+  <div id="firmwareBox">
+    <label>PS4 Firmware Type:</label>
+    <select id="firmware">
+      <option value="">-- Select --</option>
+      <option value="Original Firmware">Original Firmware</option>
+      <option value="Jailbroken Firmware">Jailbroken Firmware</option>
+    </select>
+  </div>
+
+  <label>Name:</label><input type="text" id="name" />
+  <label>Mobile:</label><input type="text" id="mobile" />
+  <label>Alt Mobile:</label><input type="text" id="altmobile" />
+  <label>Address:</label><textarea id="address"></textarea>
+  <label>Landmark:</label><input type="text" id="landmark" />
+  <label>Pincode:</label><input type="text" id="pincode" />
+  <label>City:</label><input type="text" id="city" />
+  <label>State:</label><input type="text" id="state" />
+  <label>Length (cm):</label><input type="number" id="length" />
+  <label>Width (cm):</label><input type="number" id="width" />
+  <label>Height (cm):</label><input type="number" id="height" />
+  <label>Weight (kg, optional):</label><input type="number" id="weight" step="0.01" />
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+  <button onclick="submitForm()">Sell</button>
+  <a href="Console_Sell_Terms_and_Conditions.pdf" download style="text-decoration:none">
+    <button style="background:#555">Download T&C (English)</button>
+  </a>
+  <a href="Console_Sell_Terms_and_Conditions_Hindi.pdf" download style="text-decoration:none">
+    <button style="background:#555">डाउनलोड नियम (हिंदी)</button>
+  </a>
+</div>
+
+  <script>
+    const modelMap = {
+      PS2: ["Fat", "Slim"],
+      PS3: ["Fat", "Slim", "SuperSlim"],
+      PS4: ["Fat", "Slim", "Pro"],
+      PS5: ["Fat Digital", "Fat Disc", "Slim Digital", "Slim Disc", "Pro Digital", "Pro Disc"]
+    };
+
+    function updateModels() {
+      const console = document.getElementById("console").value;
+      const modelSelect = document.getElementById("model");
+      modelSelect.innerHTML = "";
+
+      if (modelMap[console]) {
+        modelMap[console].forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          modelSelect.appendChild(opt);
+        });
+      }
+
+      document.getElementById("firmwareBox").style.display = (console === "PS4") ? "block" : "none";
+    }
+
+    function getPriceRange(console, model, firmware) {
+      if (console === "PS2") return model === "Fat" ? "❌ Not Accepted" : "₹1000 – ₹1500";
+      if (console === "PS3") return "₹4000 – ₹6000";
+      if (console === "PS4") {
+        if (model === "Fat") return firmware === "Jailbroken Firmware" ? "₹5000 – ₹7000" : "₹4000 – ₹6000";
+        if (model === "Slim") return firmware === "Jailbroken Firmware" ? "₹10000 – ₹14000" : "₹7000 – ₹8000";
+        if (model === "Pro") return firmware === "Jailbroken Firmware" ? "₹14000 – ₹17000" : "₹12000 – ₹14000";
+      }
+      if (console === "PS5") {
+        switch(model) {
+          case "Fat Digital": return "₹15000";
+          case "Fat Disc": return "₹20000";
+          case "Slim Digital": return "₹18000 – ₹20000";
+          case "Slim Disc": return "₹24000";
+          case "Pro Digital": return "₹30000";
+          case "Pro Disc": return "₹35000";
+        }
+      }
+      return "To be declared";
+    }
+
+    function submitForm() {
+      const console = document.getElementById("console").value;
+      const model = document.getElementById("model").value;
+      const firmware = document.getElementById("firmware").value;
+      const name = document.getElementById("name").value;
+      const mobile = document.getElementById("mobile").value;
+      const altmobile = document.getElementById("altmobile").value;
+      const address = document.getElementById("address").value;
+      const landmark = document.getElementById("landmark").value;
+      const pincode = document.getElementById("pincode").value;
+      const city = document.getElementById("city").value;
+      const state = document.getElementById("state").value;
+      const length = document.getElementById("length").value;
+      const width = document.getElementById("width").value;
+      const height = document.getElementById("height").value;
+      const weight = document.getElementById("weight").value;
+
+      if (console === "PS2" && model === "Fat") {
+        alert("❌ We do not accept PS2 Fat models.");
+        return;
+      }
+
+      let msg = `Game Console Sell Request\n`;
+      msg += `Name: ${name}\nMobile: ${mobile}\nAlt: ${altmobile}\n`;
+      msg += `Console: ${console} (${model})\n`;
+      if (console === "PS4") msg += `Firmware: ${firmware}\n`;
+      msg += `Address: ${address}, ${landmark}\nPincode: ${pincode}, City: ${city}, State: ${state}\n`;
+      msg += `Size: ${length}x${width}x${height} cm, Weight: ${weight || 'N/A'} kg\n`;
+      msg += `Expected Price Range: ${getPriceRange(console, model, firmware)}\n`;
+      msg += `Note: Send all sides' photos manually on WhatsApp.`;
+
+      const finalUrl = "https://wa.me/917983624797?text=" + encodeURIComponent(msg);
+      window.open(finalUrl, "_blank");
+    }
+  </script>
+<script src="https://gamesplanet13.github.io/arcade-accessories-/ps2-style-footer.js?v=20261016-ps2-view"></script></body>
+</html>
+
