@@ -17,12 +17,19 @@ export function quote(d:Device):{eligible:boolean;min:number|null;max:number|nul
  if(d.console==='PS3')return d.model==='Slim'?(best?price(5000,6000):price(3500,5000)):(best?price(4000,5000):price(3000,4000));
  if(d.console==='PS4'){
   if(!d.firmware.trim())return no('Enter firmware version, or choose Not sure.');
-  const match=d.firmware.match(/^(\d{1,2})\.(\d{1,2})$/);const below9=match&&Number(match[1])<9;
-  if(below9){const r:Record<string,[number,number]>={Fat:[5000,7000],Slim:[10000,14000],Pro:[14000,17000]};return price(...r[d.model],'Estimate uses the earlier below-9.00 firmware price tier. Firmware and condition will be verified.');}
-  const r:Record<string,[number,number]>={Fat:[4000,6000],Slim:[7000,8000],Pro:[12000,14000]};return price(...r[d.model],'Base estimate only. Exact firmware and software status need review; this does not classify your console as modified or unmodified.');
+  if(d.model==='Fat')return price(7000,8000);
+  const match=d.firmware.trim().match(/^(\d{1,2})\.(\d{1,2})$/);
+  if(d.model==='Slim'){
+   const version=match?Number(match[1])*100+Number(match[2].padEnd(2,'0')):null;
+   if(version!==null&&version<=1352)return price(12000);
+   if(version!==null&&version>=1360)return price(10000);
+   return {eligible:true,min:null,max:null,note:'PS4 Slim firmware is unknown or between 13.52 and 13.60. Games Planet will confirm the purchase value after checking the exact version.'};
+  }
+  const below9=match&&Number(match[1])<9;
+  return below9?price(14000,17000,'Estimate uses the earlier PS4 Pro below-9.00 firmware price tier. Firmware and condition will be verified.'):price(12000,14000,'PS4 Pro base estimate. Exact firmware and condition require verification.');
  }
- const prices:Record<string,[number,number]>={'Fat Digital':[15000,15000],'Fat Disc':[20000,20000],'Slim Digital':[18000,20000],'Slim Disc':[24000,24000],'Pro Digital':[30000,30000],'Pro Disc':[35000,35000]};
- return price(...prices[d.model],'Reference estimate from our existing price list. Model, attached disc drive, firmware and condition require verification.');
+ const prices:Record<string,[number,number]>={'Fat Digital':[25000,25000],'Fat Disc':[30000,30000],'Slim Digital':[30000,30000],'Slim Disc':[35000,35000],'Pro Digital':[50000,50000],'Pro Disc':[50000,50000]};
+ return price(...prices[d.model],'Purchase estimate from our updated price list. Model, attached disc drive, firmware and condition require verification.');
 }
 export function normalizeMobile(value:unknown){const n=String(value??'').replace(/\D/g,'');if(n.length===12&&n.startsWith('91'))return n.slice(2);if(n.length===11&&n.startsWith('0'))return n.slice(1);return n;}
 export const validMobile=(value:string)=>/^[6-9]\d{9}$/.test(value);
