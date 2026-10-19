@@ -1,17 +1,19 @@
 export const MODELS: Record<string, string[]> = { PS2:['Slim','Slim Rasila Combo (IDE HDD)'], PS3:['Slim','SuperSlim'], PS4:['Fat','Slim','Pro'], PS5:['Fat Digital','Fat Disc','Slim Digital','Slim Disc','Pro Digital','Pro Disc'] };
+export const SEALS=[{id:'original',name:'Original seal intact — never opened'},{id:'opened',name:'Seal opened / broken'},{id:'missing',name:'Seal missing / replaced / not original'},{id:'unknown',name:'Not sure about the seal'}];
 export const CONDITIONS = [{id:'Best',name:'Excellent',detail:'Fully working, no scratches, never repaired'},{id:'Normal',name:'Good',detail:'Fully working, visible scratches, never repaired'},{id:'Poor',name:'Repaired',detail:'Previously opened or repaired'},{id:'NotWorking',name:'Not working',detail:'Faulty or does not turn on'}];
 export const STATUSES = ['submitted','reviewing','shipping','received','inspection','offer_sent','accepted','paid','declined','cancelled'] as const;
 export const STATUS_LABELS: Record<string,string>={submitted:'Request submitted',reviewing:'Under review',shipping:'Shipping arranged',received:'Console received',inspection:'Quality check',offer_sent:'Final offer ready',accepted:'Offer accepted',paid:'Payment completed',declined:'Request declined',cancelled:'Cancelled'};
-export const TERMS_VERSION='2026-10-19-v1';
+export const TERMS_VERSION='2026-10-19-v2';
 export const ADDRESS="GAMES PLANET, Near JK’s Tyre, in front of Raza Sugar Mill Gate, Radha Road–Gurudwara Road, Civil Lines, Rampur, Uttar Pradesh 244901";
 export const money=(n:number)=>'₹'+n.toLocaleString('en-IN');
-export type Device={console:string;model:string;condition:string;firmware:string};
+export type Device={console:string;model:string;condition:string;firmware:string;seal:string};
 export function quote(d:Device):{eligible:boolean;min:number|null;max:number|null;note:string}{
  const no=(note:string)=>({eligible:false,min:null,max:null,note});
  const price=(min:number,max=min,note='Estimated purchase value. Final offer follows physical inspection.')=>({eligible:true,min,max,note});
  if(!MODELS[d.console]?.includes(d.model))return no('Select a supported console and model. PS2 Fat and PS3 Fat are not accepted.');
  if(!CONDITIONS.some(c=>c.id===d.condition))return no('Select the condition of your console.');
  if(['Poor','NotWorking'].includes(d.condition))return no('Repaired, internally modified or non-working consoles are not accepted.');
+ if(d.seal!=='original')return no(d.seal?'Only consoles with an intact original seal are accepted. Opened, broken, missing, replaced or non-original seals are not accepted.':'Confirm that the original console seal is intact and the set has never been opened.');
  const best=d.condition==='Best';
  if(d.console==='PS2')return d.model.includes('Rasila')?price(2500):best?price(1500,2000):price(1000,1500);
  if(d.console==='PS3')return d.model==='Slim'?(best?price(5000,6000):price(3500,5000)):(best?price(4000,5000):price(3000,4000));
