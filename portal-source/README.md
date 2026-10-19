@@ -28,8 +28,8 @@ The admin interface reports whether private GitHub backup is configured. Admin J
 - Working, never-repaired consoles only; no internal hardware modifications. The previous PS5 repaired-condition pricing inconsistency is removed to match the written terms.
 - PS2 Slim: Excellent ₹1,500–₹2,000, Good ₹1,000–₹1,500. Rasila IDE combo ₹2,500 reference estimate.
 - PS3 Slim: Excellent ₹5,000–₹6,000, Good ₹3,500–₹5,000. SuperSlim: Excellent ₹4,000–₹5,000, Good ₹3,000–₹4,000.
-- PS4: legacy below-9.00 quote tier is retained; other/unknown firmware gets a base provisional estimate and explicit firmware review. The app does not classify exact 9.00 or newer firmware as non-modifiable.
-- PS5 reference prices preserved from the legacy site, subject to model, drive, firmware and physical inspection. Prices are the owner's legacy list, not newly verified market quotes.
+- PS4 Fat: ₹7,000–₹8,000. PS4 Slim firmware ≤13.52: ₹12,000; firmware ≥13.60: ₹10,000. Unknown/malformed firmware and 13.53–13.59 show manual review without a guessed price. PS4 Pro retains its previous ranges because no replacement price was provided.
+- PS5 Fat Disc: ₹30,000; Fat Digital: ₹25,000; Slim Digital: ₹30,000; Slim Disc: ₹35,000; Pro Digital / Disc: ₹50,000. Updated by the owner on 19 October 2026; final inspection still applies.
 - Pickup is free subject to confirmation/serviceability. Self-courier actual reimbursement is capped at ₹350, consolidating the newer sell page over the older ₹100–₹500 PDF range.
 - Do not ship before confirmation. Payment only after inspection and acceptance of the final offer. Rejected-console return is free, matching original terms. Customer bears transit risk and must pack securely.
 
