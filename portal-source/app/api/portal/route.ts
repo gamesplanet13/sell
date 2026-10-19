@@ -35,7 +35,7 @@ export async function POST(request:Request){try{
  }
  if(body.action==='submit'){
   const profile=await db.select().from(customers).where(eq(customers.userId,user.userId)).get();if(!profile)throw new Error('Complete your registration first.');
-  const d=body.details||{},device={console:clean(d.console,10),model:clean(d.model,60),condition:clean(d.condition,20),firmware:clean(d.firmware,40)},estimate=quote(device);if(!estimate.eligible)throw new Error(estimate.note);
+  const d=body.details||{},device={console:clean(d.console,10),model:clean(d.model,60),condition:clean(d.condition,20),seal:clean(d.seal,20),firmware:clean(d.firmware,40)},estimate=quote(device);if(!estimate.eligible)throw new Error(estimate.note);
   if(['PS4','PS5'].includes(device.console)&&!device.firmware)throw new Error('Enter the firmware version or Not sure.');
   const altMobile=normalizeMobile(d.altMobile);if(altMobile&&!validMobile(altMobile))throw new Error('Alternative mobile must have 10 digits.');
   const details={...device,name:profile.name,mobile:profile.mobile,altMobile,address:clean(d.address,600),landmark:clean(d.landmark,150),pincode:clean(d.pincode,6),city:clean(d.city,80),state:clean(d.state,80),reason:clean(d.reason,50),shipping:clean(d.shipping,20),notes:clean(d.notes,1500),accessories:clean(d.accessories,400),length:Number(d.length),width:Number(d.width),height:Number(d.height),weight:d.weight?Number(d.weight):null,termsVersion:TERMS_VERSION,termsAcceptedAt:now,estimateNote:estimate.note};
@@ -45,7 +45,7 @@ export async function POST(request:Request){try{
   if(body.termsAccepted!==true)throw new Error('Please accept the selling terms.');
   const id=clean(body.id,50);if(!/^GP-[0-9a-f-]{36}$/i.test(id))throw new Error('Invalid request reference. Refresh the page.');
   const prior=await db.select().from(requests).where(eq(requests.id,id)).get();if(prior){if(prior.userId!==user.userId)throw new Error('FORBIDDEN');return json({ok:true,id})}
-  const photoIds=Array.isArray(body.photoIds)?[...new Set(body.photoIds.map((p:unknown)=>clean(p,50)))]:[];if(photoIds.length<2||photoIds.length>6)throw new Error('Upload 2–6 photos: console front/back, model label and included accessories.');
+  const photoIds=Array.isArray(body.photoIds)?[...new Set(body.photoIds.map((p:unknown)=>clean(p,50)))]:[];if(photoIds.length<2||photoIds.length>6)throw new Error('Upload 2–6 photos: console front/back, model label, original seal and included accessories.');
   const owned=await db.select().from(photos).where(and(eq(photos.userId,user.userId),inArray(photos.id,photoIds as string[])));if(owned.length!==photoIds.length||owned.some(p=>p.requestId))throw new Error('One of the photos is unavailable. Please upload it again.');
 
   const recent=await db.select({n:count()}).from(requests).where(and(eq(requests.userId,user.userId),gte(requests.createdAt,new Date(Date.now()-86400000).toISOString()))).get();if((recent?.n||0)>=5)throw new Error('You can submit up to 5 requests per day.');
