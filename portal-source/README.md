@@ -25,6 +25,8 @@ The admin interface reports whether private GitHub backup is configured. Admin J
 ## Rules consolidated from legacy pages
 
 - PS2 Fat and PS3 Fat are not accepted.
+- Original manufacturer seal must be intact and genuine. Seal-opened, broken, missing, replaced/non-original seals and repaired sets are rejected by both the quote logic and submission API. Customers explicitly choose seal status; no default acceptance is preselected. Seal status is stored with terms version `2026-10-19-v2`. Photos must include the seal for staff verification.
+- Games Planet shares the verification video recording with the customer after verification; admin guidance reminds staff to share it and record the update. This is a seller-operated step, not an automatic video messaging integration.
 - Working, never-repaired consoles only; no internal hardware modifications. The previous PS5 repaired-condition pricing inconsistency is removed to match the written terms.
 - PS2 Slim: Excellent ₹1,500–₹2,000, Good ₹1,000–₹1,500. Rasila IDE combo ₹2,500 reference estimate.
 - PS3 Slim: Excellent ₹5,000–₹6,000, Good ₹3,500–₹5,000. SuperSlim: Excellent ₹4,000–₹5,000, Good ₹3,000–₹4,000.
